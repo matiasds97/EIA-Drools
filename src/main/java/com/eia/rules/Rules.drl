@@ -1,0 +1,35 @@
+//created on: 16 abr. 2022
+package Rules
+
+import com.eia.model.Product;
+import com.eia.model.StockLevel;
+
+
+rule "R1 - Low Stock Level"
+
+    when
+        $product:Product( stock > 0, stock <= 10)
+    then
+        $product.setStockLevel(StockLevel.low);
+        update($product);
+end
+
+rule "R2 - Medium Stock Level"
+
+    when
+        $product:Product( stock > 10, stock <= 30)
+    then
+        modify($product) {
+            stockLevel = StockLevel.medium
+        }
+end
+
+rule "R3 - High Stock Level"
+
+    when
+        $product:Product( stock > 30)
+    then
+        modify($product) {
+            stockLevel = StockLevel.high
+        }
+end
