@@ -1,0 +1,12 @@
+package com.eia.model;
+
+public class DiagnosticoPreeliminar {
+	EstadoDeSaldoDeTarjeta estadoDeSaldoDeTarjeta;
+	EstadoDeTarjeta estadoDeTarjeta;
+	EstadoDeLecturaDeTarjeta estadoDeLecturaDetarjeta;
+	EstadoDeIdentificacionDeTarjeta estadoDeIdentificacionDeTarjeta;
+	EstadoDelMolinete estadoDelMolinete;
+	EstadoDelLectorDeTarjetas estadoDelLectorDeTarjetas;
+	EstadoDelProcesamientoDelLectorDeTarjetas estadoDelProcesamientoDelLectorDeTarjetas;
+	boolean tiempoMaximoDelBoletoEnPantallaExcedido;
+}
