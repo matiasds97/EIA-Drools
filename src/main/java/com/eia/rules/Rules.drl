@@ -1,35 +1,36 @@
 //created on: 16 abr. 2022
 package Rules
 
-import com.eia.model.Product;
-import com.eia.model.StockLevel;
+import com.eia.model.Lector;
+import com.eia.model.DiagnosticoPreliminar;
+import com.eia.model.EstadoDelLectorDeTarjetas;
+import com.eia.model.CondicionLector;
+import com.eia.model.Molinete;
+import com.eia.model.EstadoDelMolinete;
+import com.eia.model.CondicionMolinete;
 
 
-rule "R1 - Low Stock Level"
-
+rule "R1 - Lector no funcionando"
     when
-        $product:Product( stock > 0, stock <= 10)
+    	$lector:Lector(condicion == CondicionLector.NO_FUNCIONANDO);
     then
-        $product.setStockLevel(StockLevel.low);
-        update($product);
+        $lector.diagnosticoFinal.diagnosticoPreliminar
+        .setEstadoDelLectorDeTarjetas(EstadoDelLectorDeTarjetas.DESHABILITADO);
+    	update($lector);
 end
 
-rule "R2 - Medium Stock Level"
-
+rule "R2 - Lector funcionando"
     when
-        $product:Product( stock > 10, stock <= 30)
+        $lector:Lector(condicion == CondicionLector.FUNCIONANDO);
     then
-        modify($product) {
-            stockLevel = StockLevel.medium
-        }
+        $lector.diagnosticoFinal.diagnosticoPreliminar
+        .setEstadoDelLectorDeTarjetas(EstadoDelLectorDeTarjetas.HABILITADO);
+        update($lector);
 end
 
-rule "R3 - High Stock Level"
-
+rule "R3 - Molinete no funcionando"
     when
-        $product:Product( stock > 30)
+        $lector:Lector(molinete.condicion == CondicionMolinete.NO_FUNCIONANDO);
     then
-        modify($product) {
-            stockLevel = StockLevel.high
-        }
+        $lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.DESHABILITADO);
 end

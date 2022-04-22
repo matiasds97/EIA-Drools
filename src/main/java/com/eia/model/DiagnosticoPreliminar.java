@@ -1,6 +1,6 @@
 package com.eia.model;
 
-public class DiagnosticoPreeliminar {
+public class DiagnosticoPreliminar {
 	EstadoDeSaldoDeTarjeta estadoDeSaldoDeTarjeta;
 	EstadoDeTarjeta estadoDeTarjeta;
 	EstadoDeLecturaDeTarjeta estadoDeLecturaDetarjeta;
@@ -9,22 +9,6 @@ public class DiagnosticoPreeliminar {
 	EstadoDelLectorDeTarjetas estadoDelLectorDeTarjetas;
 	EstadoDelProcesamientoDelLectorDeTarjetas estadoDelProcesamientoDelLectorDeTarjetas;
 	boolean tiempoMaximoDelBoletoEnPantallaExcedido;
-	
-	public DiagnosticoPreeliminar(EstadoDeSaldoDeTarjeta estadoDeSaldoDeTarjeta, EstadoDeTarjeta estadoDeTarjeta,
-			EstadoDeLecturaDeTarjeta estadoDeLecturaDetarjeta,
-			EstadoDeIdentificacionDeTarjeta estadoDeIdentificacionDeTarjeta, EstadoDelMolinete estadoDelMolinete,
-			EstadoDelLectorDeTarjetas estadoDelLectorDeTarjetas,
-			EstadoDelProcesamientoDelLectorDeTarjetas estadoDelProcesamientoDelLectorDeTarjetas,
-			boolean tiempoMaximoDelBoletoEnPantallaExcedido) {	
-		this.estadoDeSaldoDeTarjeta = estadoDeSaldoDeTarjeta;
-		this.estadoDeTarjeta = estadoDeTarjeta;
-		this.estadoDeLecturaDetarjeta = estadoDeLecturaDetarjeta;
-		this.estadoDeIdentificacionDeTarjeta = estadoDeIdentificacionDeTarjeta;
-		this.estadoDelMolinete = estadoDelMolinete;
-		this.estadoDelLectorDeTarjetas = estadoDelLectorDeTarjetas;
-		this.estadoDelProcesamientoDelLectorDeTarjetas = estadoDelProcesamientoDelLectorDeTarjetas;
-		this.tiempoMaximoDelBoletoEnPantallaExcedido = tiempoMaximoDelBoletoEnPantallaExcedido;
-	}
 
 	public EstadoDeSaldoDeTarjeta getEstadoDeSaldoDeTarjeta() {
 		return estadoDeSaldoDeTarjeta;
@@ -93,14 +77,15 @@ public class DiagnosticoPreeliminar {
 
 	@Override
 	public String toString() {
-		return "DiagnosticoPreeliminar [estadoDeSaldoDeTarjeta=" + estadoDeSaldoDeTarjeta + ", estadoDeTarjeta="
-				+ estadoDeTarjeta + ", estadoDeLecturaDetarjeta=" + estadoDeLecturaDetarjeta
-				+ ", estadoDeIdentificacionDeTarjeta=" + estadoDeIdentificacionDeTarjeta + ", estadoDelMolinete="
-				+ estadoDelMolinete + ", estadoDelLectorDeTarjetas=" + estadoDelLectorDeTarjetas
-				+ ", estadoDelProcesamientoDelLectorDeTarjetas=" + estadoDelProcesamientoDelLectorDeTarjetas
-				+ ", tiempoMaximoDelBoletoEnPantallaExcedido=" + tiempoMaximoDelBoletoEnPantallaExcedido + "]";
+		return "DiagnosticoPreliminar{" +
+				"estadoDeSaldoDeTarjeta=" + estadoDeSaldoDeTarjeta +
+				", estadoDeTarjeta=" + estadoDeTarjeta +
+				", estadoDeLecturaDetarjeta=" + estadoDeLecturaDetarjeta +
+				", estadoDeIdentificacionDeTarjeta=" + estadoDeIdentificacionDeTarjeta +
+				", estadoDelMolinete=" + estadoDelMolinete +
+				", estadoDelLectorDeTarjetas=" + estadoDelLectorDeTarjetas +
+				", estadoDelProcesamientoDelLectorDeTarjetas=" + estadoDelProcesamientoDelLectorDeTarjetas +
+				", tiempoMaximoDelBoletoEnPantallaExcedido=" + tiempoMaximoDelBoletoEnPantallaExcedido +
+				'}';
 	}
-	
-	
-	
 }

@@ -6,6 +6,9 @@ public class Lector {
 	DeteccionDeTarjeta deteccionDeTarjeta;
 	float duracionDeBoletoEnPantalla;
 	int procesamiento;
+	public Molinete molinete;
+
+	public DiagnosticoFinal diagnosticoFinal;
 	
 	public Lector(CondicionLector condicion, float distanciaDeLaTarjeta, DeteccionDeTarjeta deteccionDeTarjeta,
 			float duracionDeBoletoEnPantalla, int procesamiento) {
@@ -14,6 +17,9 @@ public class Lector {
 		this.deteccionDeTarjeta = deteccionDeTarjeta;
 		this.duracionDeBoletoEnPantalla = duracionDeBoletoEnPantalla;
 		this.procesamiento = procesamiento;
+
+		diagnosticoFinal = new DiagnosticoFinal();
+		molinete = new Molinete();
 	}
 
 	public CondicionLector getCondicion() {
@@ -56,10 +62,24 @@ public class Lector {
 		this.procesamiento = procesamiento;
 	}
 
+	public DiagnosticoFinal getDiagnosticoFinal() {
+		return diagnosticoFinal;
+	}
+
+	public void setDiagnosticoFinal(DiagnosticoFinal diagnosticoFinal) {
+		this.diagnosticoFinal = diagnosticoFinal;
+	}
+
+	public Molinete getMolinete() {
+		return molinete;
+	}
+
+	public void setMolinete(Molinete molinete) {
+		this.molinete = molinete;
+	}
+
 	@Override
 	public String toString() {
-		return "Lector [condicion=" + condicion + ", distanciaDeLaTarjeta=" + distanciaDeLaTarjeta
-				+ ", deteccionDeTarjeta=" + deteccionDeTarjeta + ", duracionDeBoletoEnPantalla="
-				+ duracionDeBoletoEnPantalla + ", procesamiento=" + procesamiento + "]";
+		return"Diagnostico Final= " + diagnosticoFinal + " }";
 	}
 }

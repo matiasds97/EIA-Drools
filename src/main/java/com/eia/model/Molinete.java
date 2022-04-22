@@ -1,12 +1,12 @@
 package com.eia.model;
 
 public class Molinete {
-	AperturaMolinete apertura;
-	CondicionMolinete condicion;
-	
-	public Molinete(AperturaMolinete apertura, CondicionMolinete condicion) {
-		this.apertura = apertura;
-		this.condicion = condicion;
+	public AperturaMolinete apertura;
+	public CondicionMolinete condicion;
+
+	public Molinete() {
+		this.apertura = AperturaMolinete.NO_DETERMINADO;
+		this.condicion = CondicionMolinete.NO_DETERMINADO;
 	}
 
 	public AperturaMolinete getApertura() {

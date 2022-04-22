@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.eia.model.CondicionLector;
+import com.eia.model.DeteccionDeTarjeta;
+import com.eia.model.Lector;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
@@ -14,20 +17,23 @@ public class Main {
 
         KieSession session = KnowledgeSessionHelper.getStatefulKnowledgeSession(container, sessionName);
 
-        ArrayList<Product> products = new ArrayList<Product>();
+        ArrayList<Lector> lectores = new ArrayList<Lector>();
         Random random = new Random();
 
-        for (int i = 0; i < 5; i++) {
-            Product productToAdd = new Product("Product1",
+        Lector lector = new Lector(CondicionLector.NO_FUNCIONANDO,
+                0.02f, DeteccionDeTarjeta.DETECTADA, 1.0f, 100);
+
+        session.insert(lector);
+
+        /* for (int i = 0; i < 3; i++) {
+            Product productToAdd = new Lector("Product1",
                 random.nextInt(40));
             products.add(productToAdd);
             session.insert(productToAdd);
-        }
+        } */
 
         session.fireAllRules();
 
-        for (Product product : products) {
-            System.out.println(product);
-        }
+        System.out.println(lector);
     }
 }
