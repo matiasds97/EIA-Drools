@@ -6,7 +6,13 @@ public class Lector {
 	DeteccionDeTarjeta deteccionDeTarjeta;
 	float duracionDeBoletoEnPantalla;
 	int procesamiento;
+	
 	public Molinete molinete;
+	public Tarjeta tarjeta;
+	public Boleto boleto;
+	
+	public final float DISTANCIA_MINIMA_DETECCION = 0.03f;
+	public final float TIEMPO_MAXIMO_BOLETO = 4f;
 
 	public DiagnosticoFinal diagnosticoFinal;
 	
@@ -20,6 +26,8 @@ public class Lector {
 
 		diagnosticoFinal = new DiagnosticoFinal();
 		molinete = new Molinete();
+		tarjeta = new Tarjeta();
+		boleto = new Boleto(Boleto.IMPORTE_MINIMO);
 	}
 
 	public CondicionLector getCondicion() {
@@ -76,6 +84,23 @@ public class Lector {
 
 	public void setMolinete(Molinete molinete) {
 		this.molinete = molinete;
+	}
+	
+
+	public Tarjeta getTarjeta() {
+		return tarjeta;
+	}
+
+	public void setTarjeta(Tarjeta tarjeta) {
+		this.tarjeta = tarjeta;
+	}
+
+	public Boleto getBoleto() {
+		return boleto;
+	}
+
+	public void setBoleto(Boleto boleto) {
+		this.boleto = boleto;
 	}
 
 	@Override

@@ -3,17 +3,18 @@ package com.eia.model;
 import java.time.OffsetDateTime;
 
 public class Tarjeta {
-	float Saldo;
-	PosicionRespectoAlLector posicionRespectoAlLector;
-	EstadoChip estadoChip;
+	float saldo;
+	public PosicionRespectoAlLector posicionRespectoAlLector;
+	public EstadoChip estadoChip;
 	EstadoLogico estadoLogico;
-	OffsetDateTime fechaYHoraDelUltimoViaje;
-	OffsetDateTime fechaYHoraDelAnteultimoViaje;
+	public OffsetDateTime fechaYHoraDelUltimoViaje;
+	public OffsetDateTime fechaYHoraDelAnteultimoViaje;
+	public final float SALDO_MINIMO = -70f;
 	
 	public Tarjeta(float saldo, PosicionRespectoAlLector posicionRespectoAlLector, EstadoChip estadoChip,
 			EstadoLogico estadoLogico, OffsetDateTime fechaYHoraDelUltimoViaje,
 			OffsetDateTime fechaYHoraDelAnteultimoViaje) {
-		Saldo = saldo;
+		this.saldo = saldo;
 		this.posicionRespectoAlLector = posicionRespectoAlLector;
 		this.estadoChip = estadoChip;
 		this.estadoLogico = estadoLogico;
@@ -21,12 +22,21 @@ public class Tarjeta {
 		this.fechaYHoraDelAnteultimoViaje = fechaYHoraDelAnteultimoViaje;
 	}
 
+	public Tarjeta() {
+		this.saldo = 100f;
+		this.posicionRespectoAlLector = PosicionRespectoAlLector.ESTATICA;
+		this.estadoChip = EstadoChip.NO_DETERMINADO;
+		this.estadoLogico = EstadoLogico.HABILITADA;
+		this.fechaYHoraDelUltimoViaje = OffsetDateTime.now().minusHours(1);
+		this.fechaYHoraDelAnteultimoViaje = OffsetDateTime.now().minusHours(2);
+	}
+
 	public float getSaldo() {
-		return Saldo;
+		return saldo;
 	}
 
 	public void setSaldo(float saldo) {
-		Saldo = saldo;
+		this.saldo = saldo;
 	}
 
 	public PosicionRespectoAlLector getPosicionRespectoAlLector() {
@@ -71,7 +81,7 @@ public class Tarjeta {
 
 	@Override
 	public String toString() {
-		return "Tarjeta [Saldo=" + Saldo + ", posicionRespectoAlLector=" + posicionRespectoAlLector + ", estadoChip="
+		return "Tarjeta [Saldo=" + saldo + ", posicionRespectoAlLector=" + posicionRespectoAlLector + ", estadoChip="
 				+ estadoChip + ", estadoLogico=" + estadoLogico + ", fechaYHoraDelUltimoViaje="
 				+ fechaYHoraDelUltimoViaje + ", fechaYHoraDelAnteultimoViaje=" + fechaYHoraDelAnteultimoViaje + "]";
 	}

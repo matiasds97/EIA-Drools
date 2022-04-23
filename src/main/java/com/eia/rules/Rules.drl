@@ -1,14 +1,26 @@
 //created on: 16 abr. 2022
 package Rules
 
-import com.eia.model.Lector;
-import com.eia.model.DiagnosticoPreliminar;
-import com.eia.model.EstadoDelLectorDeTarjetas;
-import com.eia.model.CondicionLector;
-import com.eia.model.Molinete;
-import com.eia.model.EstadoDelMolinete;
-import com.eia.model.CondicionMolinete;
+import java.time.OffsetDateTime;
 
+import com.eia.model.AperturaMolinete;
+import com.eia.model.CondicionLector;
+import com.eia.model.CondicionMolinete;
+import com.eia.model.Diagnostico;
+import com.eia.model.DiagnosticoPreliminar;
+import com.eia.model.EstadoChip;
+import com.eia.model.EstadoDeIdentificacionDeTarjeta;
+import com.eia.model.EstadoDeLecturaDeTarjeta;
+import com.eia.model.EstadoDeSaldoDeTarjeta;
+import com.eia.model.EstadoDeTarjeta;
+import com.eia.model.EstadoDelLectorDeTarjetas;
+import com.eia.model.EstadoDelLectorDeTarjetas;
+import com.eia.model.EstadoDelMolinete;
+import com.eia.model.EstadoDelProcesamientoDelLectorDeTarjetas;
+import com.eia.model.EstadoLogico;
+import com.eia.model.Lector;
+import com.eia.model.Molinete;
+import com.eia.model.PosicionRespectoAlLector;
 
 rule "R1 - Lector no funcionando"
     when
@@ -33,4 +45,236 @@ rule "R3 - Molinete no funcionando"
         $lector:Lector(molinete.condicion == CondicionMolinete.NO_FUNCIONANDO);
     then
         $lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.DESHABILITADO);
+end
+
+rule "R4 - Molinete Funcionando"
+	when
+		$lector:Lector(molinete.condicion == CondicionMolinete.FUNCIONANDO);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.HABILITADO);
+end
+
+rule "R5 - Molinete condici�n no determinada"
+	when
+		$lector:Lector(molinete.condicion == CondicionMolinete.NO_DETERMINADO);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.NO_DETERMINADO);
+end
+
+rule "R6 - Molinete no gira"
+	when
+		$lector:Lector(molinete.apertura == AperturaMolinete.NO_GIRA);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.DESHABILITADO);
+end
+
+rule "R7 - Molinete gira"
+	when
+		$lector:Lector(molinete.apertura == AperturaMolinete.GIRA);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.HABILITADO);
+end
+
+rule "R8 - Molinete apertura no determinada"
+	when
+		$lector:Lector(molinete.apertura == AperturaMolinete.NO_DETERMINADO);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.NO_DETERMINADO);
+end
+
+rule "R9 - Tarjeta detectada"
+	when
+		$lector:Lector(distanciaDeLaTarjeta <= DISTANCIA_MINIMA_DETECCION);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setDeteccionDeTarjeta(true);
+end
+
+rule "R10 - Tarjeta no detectada"
+	when
+		$lector:Lector(distanciaDeLaTarjeta > DISTANCIA_MINIMA_DETECCION);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setDeteccionDeTarjeta(false);
+end
+
+rule "R11 - Lector en reposo"
+	when
+		$lector:Lector(procesamiento == 0);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar
+		.setEstadoDelProcesamientoDelLectorDeTarjetas(EstadoDelProcesamientoDelLectorDeTarjetas.EN_REPOSO);
+end
+
+rule "R12 - Lector listo para cobrar"
+	when
+		$lector:Lector(procesamiento == 20);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar
+		.setEstadoDelProcesamientoDelLectorDeTarjetas(EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR);
+end
+
+
+rule "R13 - Lector procesando cobro"
+	when
+		$lector:Lector(procesamiento > 20 && procesamiento < 100);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar
+		.setEstadoDelProcesamientoDelLectorDeTarjetas(EstadoDelProcesamientoDelLectorDeTarjetas.PROCESANDO_COBRO);
+end
+
+rule "R14 - Descuento de 2 viajes o m�s consecutivos"
+	when
+	then
+end
+
+rule "R15 - Descuento de 1 viaje consecutivos"
+	when
+	
+	then
+	
+end
+
+rule "R16 - Cobro finalizado"
+	when
+		$lector:Lector(procesamiento == 100);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar
+		.setEstadoDelProcesamientoDelLectorDeTarjetas(EstadoDelProcesamientoDelLectorDeTarjetas.EN_REPOSO);
+		$lector.setProcesamiento(0);
+		$lector.tarjeta.setSaldo($lector.tarjeta.getSaldo() - $lector.boleto.getImporte());
+		$lector.tarjeta.setFechaYHoraDelAnteultimoViaje($lector.tarjeta.getFechaYHoraDelUltimoViaje());
+		$lector.tarjeta.setFechaYHoraDelUltimoViaje(OffsetDateTime.now());
+end
+
+rule "R17 - Tiempo maximo del boleto"
+	when
+		$lector:Lector(duracionDeBoletoEnPantalla > TIEMPO_MAXIMO_BOLETO);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setTiempoMaximoDelBoletoEnPantallaExcedido(true);
+end
+
+rule "R18 - Tiempo m�ximo del boleto en pantalla no excedido"
+	when
+		$lector:Lector(duracionDeBoletoEnPantalla <= TIEMPO_MAXIMO_BOLETO);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setTiempoMaximoDelBoletoEnPantallaExcedido(false);
+end
+
+rule "R19 - Tarjeta legible identificada"
+	when
+		$lector:Lector(tarjeta.posicionRespectoAlLector == PosicionRespectoAlLector.ESTATICA && tarjeta.estadoChip == EstadoChip.BUENO);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.LEGIBLE);
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeIdentificacionDeTarjeta(EstadoDeIdentificacionDeTarjeta.IDENTIFICADA);
+end
+
+rule "R20 - tarjeta legible no identificada"
+	when
+		$lector:Lector(tarjeta.posicionRespectoAlLector == PosicionRespectoAlLector.ESTATICA && tarjeta.estadoChip == EstadoChip.NO_DETERMINADO);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.LEGIBLE);
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeIdentificacionDeTarjeta(EstadoDeIdentificacionDeTarjeta.NO_IDENTIFICADA);
+end
+
+rule "R21 -  Tarjeta no legible por tarjeta en movimiento"
+	when
+		$lector:Lector(tarjeta.posicionRespectoAlLector == PosicionRespectoAlLector.EN_MOVIMIENTO);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.NO_LEGIBLE);
+end
+
+rule "R22 -  Tarjeta no legible por chip en mal estado"
+	when
+		$lector:Lector(tarjeta.estadoChip == EstadoChip.MALO);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.NO_LEGIBLE);
+end
+
+rule "R23 - Saldo suficiente"
+	when
+		$lector:Lector(tarjeta.saldo - boleto.importe >= tarjeta.SALDO_MINIMO)
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeSaldoDeTarjeta(EstadoDeSaldoDeTarjeta.SUFICIENTE);
+end
+
+rule "R24 - Saldo insuficiente"
+	when
+		$lector:Lector(tarjeta.saldo - boleto.importe < tarjeta.SALDO_MINIMO)
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeSaldoDeTarjeta(EstadoDeSaldoDeTarjeta.INSUFICIENTE);
+end
+
+rule "R25 - Tarjeta habilitada"
+	when
+		$lector:Lector(tarjeta.estadoLogico == EstadoLogico.HABILITADA);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeTarjeta(EstadoDeTarjeta.HABILITADA);
+end
+
+rule "R26 - Tarjeta deshabilitada"
+	when
+		$lector:Lector(tarjeta.estadoLogico == EstadoLogico.DESHABILITADA);
+	then
+		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeTarjeta(EstadoDeTarjeta.DESHABILITADA);
+end
+
+rule "R27 - Error: Lector Deshabilitado"
+	when
+		$lector:Lector(diagnosticoFinal.diagnosticoPreliminar.estadoDelLectorDeTarjetas == EstadoDelLectorDeTarjetas.DESHABILITADO);
+	then
+		$lector.diagnosticoFinal.setError(Diagnostico.LECTOR_DESHABILITADO);
+end
+
+rule "R28 - Error: Molinete deshabilitado"
+	when
+	    $lector:Lector(diagnosticoFinal.diagnosticoPreliminar.estadoDelMolinete == EstadoDelMolinete.DESHABILITADO);
+	then
+	    $lector.diagnosticoFinal.setError(Diagnostico.MOLINETE_DESHABILITADO);
+end
+
+rule "R29 - Error: Sube no identificada por detección"
+	when
+	    $lector:Lector(
+	    diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
+	    && diagnosticoFinal.diagnosticoPreliminar.tiempoMaximoDelBoletoEnPantallaExcedido == true
+	    && diagnosticoFinal.diagnosticoPreliminar.deteccionDeTarjeta == false);
+	then
+        $lector.diagnosticoFinal.setError(Diagnostico.SUBE_NO_IDENTIFICADA);
+end
+
+rule "R30 - Error: Sube no identificada por identificación"
+	when
+	    $lector:Lector(
+	        diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
+	        && diagnosticoFinal.diagnosticoPreliminar.tiempoMaximoDelBoletoEnPantallaExcedido == true
+	        && diagnosticoFinal.diagnosticoPreliminar.estadoDeIdentificacionDeTarjeta == EstadoDeIdentificacionDeTarjeta.NO_IDENTIFICADA)
+	then
+	    $lector.diagnosticoFinal.setError(Diagnostico.SUBE_NO_IDENTIFICADA);
+end
+
+rule "R31 - Error: Lectura fallida"
+	when
+	    $lector:Lector(
+            diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
+            && diagnosticoFinal.diagnosticoPreliminar.tiempoMaximoDelBoletoEnPantallaExcedido == true
+            && diagnosticoFinal.diagnosticoPreliminar.getEstadoDeLecturaDeTarjeta == EstadoDeLecturaDeTarjeta.NO_LEGIBLE)
+	then
+	    $lector.diagnosticoFinal.setError(Diagnostico.LECTURA_FALLIDA);
+end
+
+rule "R32 - Error: SUBE deshabilitada"
+	when
+	    $lector:Lector(
+	        diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
+	        && diagnosticoFinal.diagnosticoPreliminar.estadoDeTarjeta == EstadoDeTarjeta.DESHABILITADA)
+	then
+	    $lector.diagnosticoFinal.setError(Diagnostico.SUBE_DESHABILITADA);
+end
+
+rule "R33 - Error: Saldo insuficiente"
+	when
+        $lector:Lector(
+   	        diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
+   	        && diagnosticoFinal.diagnosticoPreliminar.estadoDeSaldoDeTarjeta == EstadoDeSaldoDeTarjeta.INSUFICIENTE)
+	then
+        $lector.diagnosticoFinal.setError(Diagnostico.SALDO_INSUFICIENTE);
 end

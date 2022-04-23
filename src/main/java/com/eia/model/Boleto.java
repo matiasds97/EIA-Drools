@@ -2,9 +2,10 @@ package com.eia.model;
 
 public class Boleto {
 	float importe;
+	
+	public static final float IMPORTE_MINIMO = 20f;
 
 	public Boleto(float importe) {
-		super();
 		this.importe = importe;
 	}
 
