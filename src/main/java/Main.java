@@ -14,7 +14,7 @@ import com.eia.utils.KnowledgeSessionHelper;
 public class Main {
 	public static void main(String[] args) {
         KieContainer container = KnowledgeSessionHelper.createRuleBase();
-        String sessionName = "session-stock-rules";
+        String sessionName = "sube-session-rules";
 
         KieSession session = KnowledgeSessionHelper.getStatefulKnowledgeSession(container, sessionName);
 

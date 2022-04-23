@@ -17,11 +17,13 @@ public class DiagnosticoFinal {
 		this.error = error;
 	}
 
+	public Boolean isA(DiagnosticoFinal diagnostico) {
+		return this.error == diagnostico.getError();
+	}
+
 	@Override
 	public String toString() {
 		return "DiagnosticoFinal{" +
-				"error=" + error +
-				", diagnosticoPreliminar=" + diagnosticoPreliminar +
-				'}';
+				"error = " + error + "}";
 	}
 }
