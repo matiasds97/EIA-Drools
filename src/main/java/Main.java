@@ -16,10 +16,8 @@ public class Main {
         KieContainer container = KnowledgeSessionHelper.createRuleBase();
         String sessionName = "sube-session-rules";
 
-        KieSession session = KnowledgeSessionHelper.getStatefulKnowledgeSession(container, sessionName);
-
-        ArrayList<Lector> lectores = new ArrayList<Lector>();
-        Random random = new Random();
+        KieSession session = KnowledgeSessionHelper
+                .getStatefulKnowledgeSession(container, sessionName);
 
         Lector lector = new Lector(CondicionLector.NO_FUNCIONANDO,
                 0.02f, DeteccionDeTarjeta.DETECTADA, 1.0f, 100);
@@ -28,13 +26,6 @@ public class Main {
         lector.getMolinete().setCondicion(CondicionMolinete.FUNCIONANDO);
 
         session.insert(lector);
-
-        /* for (int i = 0; i < 3; i++) {
-            Product productToAdd = new Lector("Product1",
-                random.nextInt(40));
-            products.add(productToAdd);
-            session.insert(productToAdd);
-        } */
 
         session.fireAllRules();
 
