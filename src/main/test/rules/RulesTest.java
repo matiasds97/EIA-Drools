@@ -69,7 +69,7 @@ public class RulesTest {
         print("Error: SALDO INSUFICIENTE");
         Lector lector = new Lector(
                 CondicionLector.FUNCIONANDO, 0.01f, DeteccionDeTarjeta.DETECTADA,
-                1.0f, 100);
+                1.0f, 20);
 
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setSaldo(-60f);
@@ -92,7 +92,12 @@ public class RulesTest {
         print("Error: SUBE NO IDENTIFICADA");
         Lector lector = new Lector(
                 CondicionLector.FUNCIONANDO, 0.01f, DeteccionDeTarjeta.NO_DETECTADA,
-                1.0f, 100);
+                5f, 20);
+
+        Tarjeta tarjeta = new Tarjeta();
+        tarjeta.setPosicionRespectoAlLector(PosicionRespectoAlLector.ESTATICA);
+        tarjeta.setEstadoChip(EstadoChip.NO_DETERMINADO);
+        lector.setTarjeta(tarjeta);
 
         DiagnosticoFinal diagnosticoEsperado = new DiagnosticoFinal();
         diagnosticoEsperado.setError(Diagnostico.SUBE_NO_IDENTIFICADA);
@@ -111,12 +116,12 @@ public class RulesTest {
         print("Error: SUBE DESHABILITADA");
         Lector lector = new Lector(
                 CondicionLector.FUNCIONANDO, 0.01f, DeteccionDeTarjeta.DETECTADA,
-                1.0f, 100);
+                1.0f, 20);
 
         Tarjeta tarjeta = new Tarjeta();
-        tarjeta.setSaldo(-60f);
-        tarjeta.setEstadoChip(EstadoChip.MALO);
         tarjeta.setEstadoLogico(EstadoLogico.DESHABILITADA);
+        tarjeta.setEstadoChip(EstadoChip.BUENO);
+        tarjeta.setPosicionRespectoAlLector(PosicionRespectoAlLector.ESTATICA);
         lector.setTarjeta(tarjeta);
 
         DiagnosticoFinal diagnosticoEsperado = new DiagnosticoFinal();
@@ -134,12 +139,27 @@ public class RulesTest {
     @Test
     public void lecturaFallidaTest() {
         print("Error: LECTURA FALLIDA");
+
+        final int PROCESAMIENTO_LISTO_PARA_COBRAR = 20;
+        final float TIEMPO_EXCEDIDO_EN_PANTALLA = 5f;
+
         Lector lector = new Lector(
                 CondicionLector.FUNCIONANDO, 0.01f, DeteccionDeTarjeta.DETECTADA,
-                1.0f, 100);
+                TIEMPO_EXCEDIDO_EN_PANTALLA, PROCESAMIENTO_LISTO_PARA_COBRAR);
 
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setPosicionRespectoAlLector(PosicionRespectoAlLector.EN_MOVIMIENTO);
+
+        lector.setTarjeta(tarjeta);
+
+        //Condiciones para este test:
+        //DiagnosticoPreliminar dp = new DiagnosticoPreliminar();
+        //dp.setEstadoDelProcesamientoDelLectorDeTarjetas(EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR);
+
+        //dp.setTiempoMaximoDelBoletoEnPantallaExcedido(true);
+        //dp.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.NO_LEGIBLE);
+
+        //lector.getDiagnosticoFinal().diagnosticoPreliminar = dp;
 
         DiagnosticoFinal diagnosticoEsperado = new DiagnosticoFinal();
         diagnosticoEsperado.setError(Diagnostico.LECTURA_FALLIDA);

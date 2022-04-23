@@ -23,6 +23,7 @@ import com.eia.model.Molinete;
 import com.eia.model.PosicionRespectoAlLector;
 
 rule "R1 - Lector no funcionando"
+    lock-on-active
     when
     	$lector:Lector(condicion == CondicionLector.NO_FUNCIONANDO);
     then
@@ -32,6 +33,7 @@ rule "R1 - Lector no funcionando"
 end
 
 rule "R2 - Lector funcionando"
+    lock-on-active
     when
         $lector:Lector(condicion == CondicionLector.FUNCIONANDO);
     then
@@ -41,92 +43,116 @@ rule "R2 - Lector funcionando"
 end
 
 rule "R3 - Molinete no funcionando"
+    lock-on-active
     when
         $lector:Lector(molinete.condicion == CondicionMolinete.NO_FUNCIONANDO);
     then
         $lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.DESHABILITADO);
+        update($lector);
 end
 
 rule "R4 - Molinete Funcionando"
+    lock-on-active
 	when
 		$lector:Lector(molinete.condicion == CondicionMolinete.FUNCIONANDO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.HABILITADO);
+		update($lector);
 end
 
 rule "R5 - Molinete condici�n no determinada"
+    lock-on-active
 	when
 		$lector:Lector(molinete.condicion == CondicionMolinete.NO_DETERMINADO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.NO_DETERMINADO);
+		update($lector);
 end
 
 rule "R6 - Molinete no gira"
+    lock-on-active
 	when
 		$lector:Lector(molinete.apertura == AperturaMolinete.NO_GIRA);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.DESHABILITADO);
+		update($lector);
 end
 
 rule "R7 - Molinete gira"
+    lock-on-active
 	when
 		$lector:Lector(molinete.apertura == AperturaMolinete.GIRA);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.HABILITADO);
+		update($lector);
 end
 
 rule "R8 - Molinete apertura no determinada"
+    lock-on-active
 	when
 		$lector:Lector(molinete.apertura == AperturaMolinete.NO_DETERMINADO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDelMolinete(EstadoDelMolinete.NO_DETERMINADO);
+		update($lector);
 end
 
 rule "R9 - Tarjeta detectada"
+    lock-on-active
 	when
 		$lector:Lector(distanciaDeLaTarjeta <= DISTANCIA_MINIMA_DETECCION);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setDeteccionDeTarjeta(true);
+		update($lector);
 end
 
 rule "R10 - Tarjeta no detectada"
+    lock-on-active
 	when
 		$lector:Lector(distanciaDeLaTarjeta > DISTANCIA_MINIMA_DETECCION);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setDeteccionDeTarjeta(false);
+		update($lector);
 end
 
 rule "R11 - Lector en reposo"
+    lock-on-active
 	when
 		$lector:Lector(procesamiento == 0);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar
 		.setEstadoDelProcesamientoDelLectorDeTarjetas(EstadoDelProcesamientoDelLectorDeTarjetas.EN_REPOSO);
+		update($lector);
 end
 
 rule "R12 - Lector listo para cobrar"
+    lock-on-active
 	when
 		$lector:Lector(procesamiento == 20);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar
 		.setEstadoDelProcesamientoDelLectorDeTarjetas(EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR);
+		update($lector);
 end
 
 
 rule "R13 - Lector procesando cobro"
+    lock-on-active
 	when
 		$lector:Lector(procesamiento > 20 && procesamiento < 100);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar
 		.setEstadoDelProcesamientoDelLectorDeTarjetas(EstadoDelProcesamientoDelLectorDeTarjetas.PROCESANDO_COBRO);
+		update($lector);
 end
 
 rule "R14 - Descuento de 2 viajes o m�s consecutivos"
+    lock-on-active
 	when
 	then
 end
 
 rule "R15 - Descuento de 1 viaje consecutivos"
+    lock-on-active
 	when
 	
 	then
@@ -134,6 +160,7 @@ rule "R15 - Descuento de 1 viaje consecutivos"
 end
 
 rule "R16 - Cobro finalizado"
+    lock-on-active
 	when
 		$lector:Lector(procesamiento == 100);
 	then
@@ -143,95 +170,121 @@ rule "R16 - Cobro finalizado"
 		$lector.tarjeta.setSaldo($lector.tarjeta.getSaldo() - $lector.boleto.getImporte());
 		$lector.tarjeta.setFechaYHoraDelAnteultimoViaje($lector.tarjeta.getFechaYHoraDelUltimoViaje());
 		$lector.tarjeta.setFechaYHoraDelUltimoViaje(OffsetDateTime.now());
+		update($lector);
 end
 
 rule "R17 - Tiempo maximo del boleto"
+    lock-on-active
 	when
 		$lector:Lector(duracionDeBoletoEnPantalla > TIEMPO_MAXIMO_BOLETO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setTiempoMaximoDelBoletoEnPantallaExcedido(true);
+		update($lector);
 end
 
 rule "R18 - Tiempo m�ximo del boleto en pantalla no excedido"
+    lock-on-active
 	when
 		$lector:Lector(duracionDeBoletoEnPantalla <= TIEMPO_MAXIMO_BOLETO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setTiempoMaximoDelBoletoEnPantallaExcedido(false);
+		update($lector);
 end
 
 rule "R19 - Tarjeta legible identificada"
+    lock-on-active
 	when
 		$lector:Lector(tarjeta.posicionRespectoAlLector == PosicionRespectoAlLector.ESTATICA && tarjeta.estadoChip == EstadoChip.BUENO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.LEGIBLE);
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeIdentificacionDeTarjeta(EstadoDeIdentificacionDeTarjeta.IDENTIFICADA);
+		update($lector);
 end
 
 rule "R20 - tarjeta legible no identificada"
+    lock-on-active
 	when
 		$lector:Lector(tarjeta.posicionRespectoAlLector == PosicionRespectoAlLector.ESTATICA && tarjeta.estadoChip == EstadoChip.NO_DETERMINADO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.LEGIBLE);
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeIdentificacionDeTarjeta(EstadoDeIdentificacionDeTarjeta.NO_IDENTIFICADA);
+		update($lector);
 end
 
 rule "R21 -  Tarjeta no legible por tarjeta en movimiento"
+    lock-on-active
 	when
 		$lector:Lector(tarjeta.posicionRespectoAlLector == PosicionRespectoAlLector.EN_MOVIMIENTO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.NO_LEGIBLE);
+		update($lector);
 end
 
 rule "R22 -  Tarjeta no legible por chip en mal estado"
+    lock-on-active
 	when
 		$lector:Lector(tarjeta.estadoChip == EstadoChip.MALO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.NO_LEGIBLE);
+		update($lector);
 end
 
 rule "R23 - Saldo suficiente"
+    lock-on-active
 	when
 		$lector:Lector(tarjeta.saldo - boleto.importe >= tarjeta.SALDO_MINIMO)
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeSaldoDeTarjeta(EstadoDeSaldoDeTarjeta.SUFICIENTE);
+		update($lector);
 end
 
 rule "R24 - Saldo insuficiente"
+    lock-on-active
 	when
 		$lector:Lector(tarjeta.saldo - boleto.importe < tarjeta.SALDO_MINIMO)
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeSaldoDeTarjeta(EstadoDeSaldoDeTarjeta.INSUFICIENTE);
+		update($lector);
 end
 
 rule "R25 - Tarjeta habilitada"
+    lock-on-active
 	when
 		$lector:Lector(tarjeta.estadoLogico == EstadoLogico.HABILITADA);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeTarjeta(EstadoDeTarjeta.HABILITADA);
+		update($lector);
 end
 
 rule "R26 - Tarjeta deshabilitada"
+    lock-on-active
 	when
 		$lector:Lector(tarjeta.estadoLogico == EstadoLogico.DESHABILITADA);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeTarjeta(EstadoDeTarjeta.DESHABILITADA);
+		update($lector);
 end
 
 rule "R27 - Error: Lector Deshabilitado"
+    no-loop true
 	when
 		$lector:Lector(diagnosticoFinal.diagnosticoPreliminar.estadoDelLectorDeTarjetas == EstadoDelLectorDeTarjetas.DESHABILITADO);
 	then
 		$lector.diagnosticoFinal.setError(Diagnostico.LECTOR_DESHABILITADO);
+		update($lector);
 end
 
 rule "R28 - Error: Molinete deshabilitado"
+    no-loop true
 	when
 	    $lector:Lector(diagnosticoFinal.diagnosticoPreliminar.estadoDelMolinete == EstadoDelMolinete.DESHABILITADO);
 	then
 	    $lector.diagnosticoFinal.setError(Diagnostico.MOLINETE_DESHABILITADO);
+	    update($lector);
 end
 
 rule "R29 - Error: Sube no identificada por detección"
+    no-loop true
 	when
 	    $lector:Lector(
 	    diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
@@ -239,9 +292,11 @@ rule "R29 - Error: Sube no identificada por detección"
 	    && diagnosticoFinal.diagnosticoPreliminar.deteccionDeTarjeta == false);
 	then
         $lector.diagnosticoFinal.setError(Diagnostico.SUBE_NO_IDENTIFICADA);
+        update($lector);
 end
 
 rule "R30 - Error: Sube no identificada por identificación"
+    no-loop true
 	when
 	    $lector:Lector(
 	        diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
@@ -249,9 +304,11 @@ rule "R30 - Error: Sube no identificada por identificación"
 	        && diagnosticoFinal.diagnosticoPreliminar.estadoDeIdentificacionDeTarjeta == EstadoDeIdentificacionDeTarjeta.NO_IDENTIFICADA)
 	then
 	    $lector.diagnosticoFinal.setError(Diagnostico.SUBE_NO_IDENTIFICADA);
+	    update($lector);
 end
 
 rule "R31 - Error: Lectura fallida"
+    no-loop true
 	when
 	    $lector:Lector(
             diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
@@ -259,22 +316,27 @@ rule "R31 - Error: Lectura fallida"
             && diagnosticoFinal.diagnosticoPreliminar.getEstadoDeLecturaDeTarjeta == EstadoDeLecturaDeTarjeta.NO_LEGIBLE)
 	then
 	    $lector.diagnosticoFinal.setError(Diagnostico.LECTURA_FALLIDA);
+	    update($lector);
 end
 
 rule "R32 - Error: SUBE deshabilitada"
+    no-loop true
 	when
 	    $lector:Lector(
 	        diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
 	        && diagnosticoFinal.diagnosticoPreliminar.estadoDeTarjeta == EstadoDeTarjeta.DESHABILITADA)
 	then
 	    $lector.diagnosticoFinal.setError(Diagnostico.SUBE_DESHABILITADA);
+	    update($lector);
 end
 
 rule "R33 - Error: Saldo insuficiente"
+    no-loop true
 	when
         $lector:Lector(
    	        diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
    	        && diagnosticoFinal.diagnosticoPreliminar.estadoDeSaldoDeTarjeta == EstadoDeSaldoDeTarjeta.INSUFICIENTE)
 	then
         $lector.diagnosticoFinal.setError(Diagnostico.SALDO_INSUFICIENTE);
+        update($lector);
 end

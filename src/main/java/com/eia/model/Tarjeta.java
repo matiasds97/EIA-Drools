@@ -6,7 +6,7 @@ public class Tarjeta {
 	float saldo;
 	public PosicionRespectoAlLector posicionRespectoAlLector;
 	public EstadoChip estadoChip;
-	EstadoLogico estadoLogico;
+	public EstadoLogico estadoLogico;
 	public OffsetDateTime fechaYHoraDelUltimoViaje;
 	public OffsetDateTime fechaYHoraDelAnteultimoViaje;
 	public final float SALDO_MINIMO = -70f;
