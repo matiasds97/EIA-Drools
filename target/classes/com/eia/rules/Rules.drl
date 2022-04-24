@@ -187,7 +187,7 @@ rule "R19 - Tarjeta legible identificada"
 		update($lector);
 end
 
-rule "R20 - tarjeta legible no identificada"
+rule "R20 - Tarjeta legible no identificada"
     lock-on-active
 	when
 		$lector:Lector(tarjeta.posicionRespectoAlLector == PosicionRespectoAlLector.ESTATICA && tarjeta.estadoChip == EstadoChip.NO_DETERMINADO);

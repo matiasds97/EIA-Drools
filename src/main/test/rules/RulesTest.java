@@ -48,9 +48,14 @@ public class RulesTest {
     @Test
     public void noHayFallasTest() {
         print("Error: NO DETERMINADO");
+
         Lector lector = new Lector(
             CondicionLector.FUNCIONANDO, 0.01f, DeteccionDeTarjeta.DETECTADA,
-            1.0f, 100);
+            1.0f, 20);
+
+        Tarjeta tarjeta = new Tarjeta();
+        lector.setTarjeta(tarjeta);
+
         DiagnosticoFinal diagnosticoEsperado = new DiagnosticoFinal();
         diagnosticoEsperado.setError(Diagnostico.NO_DETERMINADO);
 
@@ -150,15 +155,6 @@ public class RulesTest {
         tarjeta.setPosicionRespectoAlLector(PosicionRespectoAlLector.EN_MOVIMIENTO);
 
         lector.setTarjeta(tarjeta);
-
-        //Condiciones para este test:
-        //DiagnosticoPreliminar dp = new DiagnosticoPreliminar();
-        //dp.setEstadoDelProcesamientoDelLectorDeTarjetas(EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR);
-
-        //dp.setTiempoMaximoDelBoletoEnPantallaExcedido(true);
-        //dp.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.NO_LEGIBLE);
-
-        //lector.getDiagnosticoFinal().diagnosticoPreliminar = dp;
 
         DiagnosticoFinal diagnosticoEsperado = new DiagnosticoFinal();
         diagnosticoEsperado.setError(Diagnostico.LECTURA_FALLIDA);
