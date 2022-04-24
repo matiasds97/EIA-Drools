@@ -2,7 +2,6 @@ package rules;
 
 import com.eia.model.*;
 import com.eia.utils.KnowledgeSessionHelper;
-import com.eia.utils.TestCaseUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

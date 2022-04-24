@@ -145,20 +145,6 @@ rule "R13 - Lector procesando cobro"
 		update($lector);
 end
 
-rule "R14 - Descuento de 2 viajes o m�s consecutivos"
-    lock-on-active
-	when
-	then
-end
-
-rule "R15 - Descuento de 1 viaje consecutivos"
-    lock-on-active
-	when
-	
-	then
-	
-end
-
 rule "R16 - Cobro finalizado"
     lock-on-active
 	when
