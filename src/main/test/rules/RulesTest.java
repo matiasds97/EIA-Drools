@@ -94,9 +94,12 @@ public class RulesTest {
     @Test
     public void subeNoIdentificadaTest() {
         print("Error: SUBE NO IDENTIFICADA");
+
+        final float DEMASIADA_DISTANCIA = 1f;
+
         Lector lector = new Lector(
-                CondicionLector.FUNCIONANDO, 0.01f, DeteccionDeTarjeta.NO_DETECTADA,
-                5f, 20);
+                CondicionLector.FUNCIONANDO, DEMASIADA_DISTANCIA,
+                DeteccionDeTarjeta.NO_DETECTADA, 5f, 20);
 
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setPosicionRespectoAlLector(PosicionRespectoAlLector.ESTATICA);

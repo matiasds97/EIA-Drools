@@ -22,6 +22,8 @@ import com.eia.model.Lector;
 import com.eia.model.Molinete;
 import com.eia.model.PosicionRespectoAlLector;
 
+// Las reglas R14, R15 y R30 fueron quitadas por revisión de conocimiento fáctico.
+
 rule "R1 - Lector no funcionando"
     lock-on-active
     when
@@ -183,7 +185,6 @@ rule "R19 - Tarjeta legible identificada"
 		$lector:Lector(tarjeta.posicionRespectoAlLector == PosicionRespectoAlLector.ESTATICA && tarjeta.estadoChip == EstadoChip.BUENO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.LEGIBLE);
-		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeIdentificacionDeTarjeta(EstadoDeIdentificacionDeTarjeta.IDENTIFICADA);
 		update($lector);
 end
 
@@ -193,7 +194,6 @@ rule "R20 - Tarjeta legible no identificada"
 		$lector:Lector(tarjeta.posicionRespectoAlLector == PosicionRespectoAlLector.ESTATICA && tarjeta.estadoChip == EstadoChip.NO_DETERMINADO);
 	then
 		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeLecturaDeTarjeta(EstadoDeLecturaDeTarjeta.LEGIBLE);
-		$lector.diagnosticoFinal.diagnosticoPreliminar.setEstadoDeIdentificacionDeTarjeta(EstadoDeIdentificacionDeTarjeta.NO_IDENTIFICADA);
 		update($lector);
 end
 
@@ -279,18 +279,6 @@ rule "R29 - Error: Sube no identificada por detección"
 	then
         $lector.diagnosticoFinal.setError(Diagnostico.SUBE_NO_IDENTIFICADA);
         update($lector);
-end
-
-rule "R30 - Error: Sube no identificada por identificación"
-    no-loop true
-	when
-	    $lector:Lector(
-	        diagnosticoFinal.diagnosticoPreliminar.estadoDelProcesamientoDelLectorDeTarjetas == EstadoDelProcesamientoDelLectorDeTarjetas.LISTO_PARA_COBRAR
-	        && diagnosticoFinal.diagnosticoPreliminar.tiempoMaximoDelBoletoEnPantallaExcedido == true
-	        && diagnosticoFinal.diagnosticoPreliminar.estadoDeIdentificacionDeTarjeta == EstadoDeIdentificacionDeTarjeta.NO_IDENTIFICADA)
-	then
-	    $lector.diagnosticoFinal.setError(Diagnostico.SUBE_NO_IDENTIFICADA);
-	    update($lector);
 end
 
 rule "R31 - Error: Lectura fallida"

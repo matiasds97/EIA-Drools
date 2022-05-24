@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Random;
-
 import com.eia.model.CondicionLector;
 import com.eia.model.CondicionMolinete;
 import com.eia.model.DeteccionDeTarjeta;
